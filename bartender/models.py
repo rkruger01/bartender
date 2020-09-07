@@ -3,14 +3,14 @@ from django.db import models
 
 # Create your models here.
 class AlcoholicIngredient(models.Model):
-    name = models.CharField(max_length=60)
+    name = models.CharField(max_length=60, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class NAIngredient(models.Model):
-    name = models.CharField(max_length=60)
+    name = models.CharField(max_length=60, unique=True)
 
     def __str__(self):
         return self.name

@@ -1,8 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from .models import Drink
+from django.db.utils import IntegrityError
+from .models import Drink, AlcoholicIngredient
+from .forms import LiquorForm
+
 
 # Create your views here.
 def index(request):
@@ -11,8 +14,27 @@ def index(request):
     return render(request, 'bartender/index.html', context)
 
 
-def drink(request, drinkname):
-    if Drink.objects.filter(name=drinkname).exists():
-        drink = Drink.objects.get(name=drinkname)
-        context = {"requestedDrink":drink}
+def drink(request, drinkName):
+    if Drink.objects.filter(name=drinkName).exists():
+        drink = Drink.objects.get(name=drinkName)
+        context = {"requestedDrink": drink}
         return render(request, 'bartender/drink.html', context)
+    else:
+        raise Http404("Error: Drink does not exist")
+
+
+def addLiquor(request):
+    if request.method == 'POST':
+        form = LiquorForm(request.POST)
+        if form.is_valid():
+            newAI = AlcoholicIngredient()
+            newAI.name = form.cleaned_data['name']
+            try:
+                newAI.save()
+            except IntegrityError:
+                return HttpResponse("Error: Drink already exists!")
+        return HttpResponseRedirect('/')
+    else:
+        form = LiquorForm()
+        context = {'form': form}
+    return render(request, 'bartender/addLiquor.html', context)
