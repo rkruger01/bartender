@@ -1,0 +1,12 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'bartender/style.css' %}" />
+{%if topDrinkList %}
+    <ul>
+    {% for drink in topDrinkList %}
+        <li><a href="{% url 'Drink' drink.name%}">{{ drink.name }}</a> has been consumed {{ drink.timesMade }} times.</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Drinks Available. Sorry!</p>
+{% endif %}

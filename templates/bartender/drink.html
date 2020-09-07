@@ -1,0 +1,14 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'bartender/style.css' %}" />
+
+{% if  requestedDrink %}
+    <ul>
+        <li>Name: {{ requestedDrink.name }}</li>
+        <li>Ingredients: {{ requestedDrink.ingredientAmount }}</li>
+        <li>Times Made: {{ requestedDrink.timesMade }}</li>
+        <li>Instructions: {{ requestedDrink.instructions }}</li>
+    </ul>
+{% else %}
+    Oops! An error has occurred! Please try again later.
+{% endif %}
