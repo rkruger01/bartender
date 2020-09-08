@@ -1,4 +1,5 @@
 {% load static %}
+
 <link rel="stylesheet" type="text/css" href="{% static 'bartender/bootstrap.css' %}" />
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="/drinks/">Bartender</a>
@@ -31,27 +32,27 @@
         </form>
     </div>
 </nav>
-<div class="container">
-    <!--Top drinks consumed pane-->
-    <div class="col-md-10">
-        {%if topDrinkList %}
-            <h3 align="center">Top Drinks Consumed</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Drink Name</th>
-                        <th scope="col">Times Consumed</th>
-                    </tr>
-                </thead>
-                {% for drink in topDrinkList %}
-                    <tr>
-                        <td><a href="{% url 'Drink' drink.name%}">{{ drink.name }}</a></td>
-                        <td>{{ drink.timesMade }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <p>No Drinks Available. Sorry!</p>
-        {% endif %}
+
+{% if results %}
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Drink Name</th>
+                    <th scope="col">Ingredients</th>
+                    <th scope="col">Image</th>
+                </tr>
+            </thead>
+            {% for drink in results %}
+                <tr>
+                    <td><a href="{% url 'Drink' drink.name%}">{{ drink.name }}</a></td>
+                    <td>{{ drink.ingredientAmount }}</td>
+                    <td><img src="{{ drink.associatedImage }}" alt="No Associated Image" style="max-width: 200px;"></td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
-</div>
+
+{% else %}
+
+{% endif %}

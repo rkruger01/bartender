@@ -23,6 +23,17 @@ def drink(request, drinkName):
         raise Http404("Error: Drink does not exist")
 
 
+def search(request):
+    def get_queryset():
+        query = request.GET.get('search')
+        objList = Drink.objects.filter(name__icontains=query)
+        return objList
+    matches = get_queryset()
+    context = {"results": matches}
+    print(matches)
+    return render(request, 'bartender/results.html', context)
+
+
 def addLiquor(request):
     if request.method == 'POST':
         form = LiquorForm(request.POST)
