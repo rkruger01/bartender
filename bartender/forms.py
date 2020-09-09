@@ -8,3 +8,4 @@ class LiquorForm(forms.Form):
 
 class IngredientForm(forms.Form):
     name = forms.CharField(label='Ingredient Name', max_length=60, widget=forms.TextInput(attrs={'class': 'form-control'}))
+

@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.db.utils import IntegrityError
 from .models import Drink, AlcoholicIngredient, NAIngredient
 from .forms import LiquorForm, IngredientForm
+import json, os
 
 
 # Create your views here.
@@ -57,7 +58,7 @@ def addIngredient(request):
     if request.method == 'POST':
         form = IngredientForm(request.POST)
         if form.is_valid():
-            newIngredient = NAIngredient
+            newIngredient = NAIngredient()
             newIngredient.name = form.cleaned_data['name']
             try:
                 newIngredient.save()
@@ -69,3 +70,26 @@ def addIngredient(request):
         objList = NAIngredient.objects.all()
         context = {'form': form, 'ingredients': objList}
     return render(request, 'bartender/addItem.html', context)
+
+def massImportDrinks(request):
+    with open("input.txt", encoding="utf8") as file:
+        drinks = json.load(file)
+        for drink in drinks:
+            newDrink = Drink()
+            newDrink.name = drink['name']
+            for ingredient in drink['ingredients']:
+                newIngredient = ""
+                try:
+                    newIngredient += ingredient['ingredient']
+                    if 'amount' in ingredient.keys():
+                        newIngredient += ": " + str(ingredient['amount'])
+                    if 'unit' in ingredient.keys():
+                        newIngredient += " " + ingredient['unit']
+                    print("")
+                except KeyError:
+                    newIngredient += ingredient['special']
+                newDrink.ingredientAmount += "\n" + newIngredient
+            try:
+                newDrink.instructions = drink['preparation']
+            except KeyError:
+                newDrink.instructions = "Mix and Enjoy."
