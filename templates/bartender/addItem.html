@@ -1,0 +1,116 @@
+{% load static %}
+<!--if addAlcohol, then adding an alcoholic ingredient to the database -->
+<link rel="stylesheet" type="text/css" href="{% static 'bartender/bootstrap.css' %}" />
+{% if addAlcohol %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/drinks/">Bartender</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/">Home<span class="sr-only">current</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/drinks/add-liquor">Add Liquor to Database</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/add-ingredient">Add Ingredient to Database</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/add-drink">Add Drink to Database</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/ingredient-search">Ingredient Search</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0" method="get" action="/drinks/search/">
+                <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search Drinks" />
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+{% else %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/drinks/">Bartender</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/">Home<span class="sr-only">current</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/add-liquor">Add Liquor to Database</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/drinks/add-ingredient">Add Ingredient to Database</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/add-drink">Add Drink to Database</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/ingredient-search">Ingredient Search</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0" method="get" action="/drinks/search/">
+                <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search Drinks" />
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+{% endif %}
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <form action="/drinks/add-liquor" method="post">
+                {% csrf_token %}
+                {{ form }}
+            <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="col-md-8">
+            {% if addAlcohol %}
+                {% if drinks %}
+                    <h5 align="center">Alcohols already in database:</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Alcohol Name</th>
+                            </tr>
+                        </thead>
+                        {% for alcohol in drinks %}
+                            <tr>
+                                <td>{{ alcohol.name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            {% else %}
+                {% if ingredients %}
+                    <h5 align="center">Ingredients already in database:</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Ingredient Name</th>
+                            </tr>
+                        </thead>
+                        {% for ingredient in ingredients %}
+                            <tr>
+                                <td>{{ ingredient.name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <h5 align="center">No ingredients in database</h5>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>

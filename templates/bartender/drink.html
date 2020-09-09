@@ -2,7 +2,7 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'bartender/bootstrap.css' %}" />
 
-{% if  requestedDrink %}
+{% if requestedDrink %}
     <ul>
         <li>Name: {{ requestedDrink.name }}</li>
         <li>Ingredients: {{ requestedDrink.ingredientAmount }}</li>

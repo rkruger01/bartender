@@ -3,8 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.db.utils import IntegrityError
-from .models import Drink, AlcoholicIngredient
-from .forms import LiquorForm
+from .models import Drink, AlcoholicIngredient, NAIngredient
+from .forms import LiquorForm, IngredientForm
 
 
 # Create your views here.
@@ -28,6 +28,7 @@ def search(request):
         query = request.GET.get('search')
         objList = Drink.objects.filter(name__icontains=query)
         return objList
+
     matches = get_queryset()
     context = {"results": matches}
     print(matches)
@@ -47,5 +48,24 @@ def addLiquor(request):
         return HttpResponseRedirect('/')
     else:
         form = LiquorForm()
-        context = {'form': form}
-    return render(request, 'bartender/addLiquor.html', context)
+        liquorList = AlcoholicIngredient.objects.all()
+        context = {'form': form, 'addAlcohol': 'true', 'drinks': liquorList}
+    return render(request, 'bartender/addItem.html', context)
+
+
+def addIngredient(request):
+    if request.method == 'POST':
+        form = IngredientForm(request.POST)
+        if form.is_valid():
+            newIngredient = NAIngredient
+            newIngredient.name = form.cleaned_data['name']
+            try:
+                newIngredient.save()
+            except IntegrityError:
+                return HttpResponse("Error: Ingredient already exists!")
+        return HttpResponseRedirect('/')
+    else:
+        form = IngredientForm()
+        objList = NAIngredient.objects.all()
+        context = {'form': form, 'ingredients': objList}
+    return render(request, 'bartender/addItem.html', context)
