@@ -4,8 +4,8 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.db.utils import IntegrityError
 from .models import Drink, AlcoholicIngredient, NAIngredient
-from .forms import LiquorForm, IngredientForm
-import json, os
+from .forms import LiquorForm, IngredientForm, UpdateLiquorForm, UpdateNAIngredientForm
+import json
 
 
 # Create your views here.
@@ -72,7 +72,41 @@ def addIngredient(request):
     return render(request, 'bartender/addItem.html', context)
 
 
-# legacy definition
+def updateMyBar(request):
+    if request.method == 'POST':
+        #update my ingredients
+        aForm = UpdateLiquorForm(request.POST)
+        naForm = UpdateNAIngredientForm(request.POST)
+        if aForm.is_valid() and naForm.is_valid():
+            myList = aForm.cleaned_data.get('liquors')
+            aResults = []
+            for obj in myList:
+                aResults.append(obj.name)
+            for aIng in AlcoholicIngredient.objects.all():
+                if aIng.name in aResults:
+                    aIng.inCabinet = True
+                else:
+                    aIng.inCabinet = False
+                aIng.save()
+            myList = naForm.cleaned_data.get('ingredients')
+            naResults = []
+            for obj in myList:
+                naResults.append(obj.name)
+            for naIng in NAIngredient.objects.all():
+                if naIng.name in naResults:
+                    naIng.inCabinet = True
+                else:
+                    naIng.inCabinet = False
+                naIng.save()
+        context = {'NAIngredients' : naForm, 'AlcoholicIngredients' : aForm}
+    else:
+        #list ingredients to be updated
+        aIngredientForm = UpdateLiquorForm()
+        naIngredientForm = UpdateNAIngredientForm()
+        context = {'NAIngredients' : naIngredientForm, 'AlcoholicIngredients' : aIngredientForm}
+    return render(request, 'bartender/updateBar.html', context)
+
+# legacy function
 def massImportDrinks(request):
     with open("bartender/input.txt", encoding="utf8") as file:
         drinks = json.load(file)

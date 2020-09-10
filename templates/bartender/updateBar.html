@@ -32,24 +32,28 @@
     </div>
 </nav>
 <div class="container-fluid">
-    <!--Top drinks consumed pane-->
-    <div class="col-md-10">
-        {%if topDrinkList %}
-            <h3 align="center">Top Drinks Consumed</h3>
+        <form action="/drinks/updateBar" method="post">
+            {% csrf_token %}
             <div class="row">
-                {% for drink in topDrinkList %}
-                    <div class="card ml-3 mt-3 border-primary" style="width:18rem;">
-                        <img src="{{ drink.associatedImage }}" class="card-img-top" style="height: 180px; width: 100%; display: block;">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">{{ drink.name }}</h5>
-                            <p class="card-text">{{ drink.ingredientAmount|linebreaks }}</p>
-                            <a href="{% url 'Drink' drink.name%}" class="btn btn-primary stretched-link">Visit Page</a>
-                        </div>
-                    </div>
-                {% endfor %}
+                <div class="col-md-5">
+                    {% if AlcoholicIngredients %}
+                        <h3 class="align-content-center">Edit Alcoholic Ingredients</h3>
+                        {{ AlcoholicIngredients}}
+                    {% else %}
+                        no form
+                    {% endif %}
+                </div>
+                <div class="col-md-5">
+                    {% if NAIngredients %}
+                        <h3 class="align-content-center">Edit Non-Alcoholic Ingredients</h3>
+                        {{ NAIngredients}}
+                    {% else %}
+                        no form
+                    {% endif %}
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary mt-3 mr-3 btn-lg btn-block">Update</button>
+                </div>
             </div>
-        {% else %}
-            <p>No Drinks Available. Sorry!</p>
-        {% endif %}
-    </div>
+        </form>
 </div>
