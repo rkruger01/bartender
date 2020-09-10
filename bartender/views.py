@@ -71,25 +71,31 @@ def addIngredient(request):
         context = {'form': form, 'ingredients': objList}
     return render(request, 'bartender/addItem.html', context)
 
+
+# legacy definition
 def massImportDrinks(request):
-    with open("input.txt", encoding="utf8") as file:
+    with open("bartender/input.txt", encoding="utf8") as file:
         drinks = json.load(file)
         for drink in drinks:
-            newDrink = Drink()
+            newDrink = Drink.objects.create()
             newDrink.name = drink['name']
             for ingredient in drink['ingredients']:
                 newIngredient = ""
-                try:
+                if 'ingredient' in ingredient.keys():
                     newIngredient += ingredient['ingredient']
+                    if ingredient['ingredient'] in NAIngredient.objects.all().values_list('name', flat=True):
+                        newDrink.NAIngredients.add(NAIngredient.objects.get(name__iexact=ingredient['ingredient']))
+                    if ingredient['ingredient'] in AlcoholicIngredient.objects.all().values_list('name', flat=True):
+                        newDrink.liquor.add(AlcoholicIngredient.objects.get(name__iexact=ingredient['ingredient']))
                     if 'amount' in ingredient.keys():
                         newIngredient += ": " + str(ingredient['amount'])
                     if 'unit' in ingredient.keys():
                         newIngredient += " " + ingredient['unit']
-                    print("")
-                except KeyError:
+                else:
                     newIngredient += ingredient['special']
-                newDrink.ingredientAmount += "\n" + newIngredient
-            try:
+                newDrink.ingredientAmount += newIngredient + "\n"
+            if 'preparation' in drink.keys():
                 newDrink.instructions = drink['preparation']
-            except KeyError:
+            else:
                 newDrink.instructions = "Mix and Enjoy."
+            newDrink.save()
